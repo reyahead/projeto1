@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/projectile.gd" id="1_projectile"]
+
+[sub_resource type="CircleShape2D" id="ProjectileShape"]
+radius = 9.0
+
+[node name="MagicProjectile" type="Area2D"]
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("1_projectile")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("ProjectileShape")
+
+[node name="Visual" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(0, -10, 8, 0, 0, 10, -8, 0)
+color = Color(0.62, 0.83, 1, 1)

@@ -1,7 +1,12 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=14 format=3]
 
 [ext_resource type="Script" path="res://scripts/player_controller.gd" id="1_player"]
 [ext_resource type="Script" path="res://scripts/world_art.gd" id="2_art"]
+[ext_resource type="Script" path="res://scripts/combatant.gd" id="3_combatant"]
+[ext_resource type="Script" path="res://scripts/ability_executor.gd" id="4_ability"]
+[ext_resource type="Script" path="res://scripts/enemy_controller.gd" id="5_enemy"]
+[ext_resource type="Script" path="res://scripts/combat_manager.gd" id="6_manager"]
+[ext_resource type="Script" path="res://scripts/flying_enemy_controller.gd" id="7_flying_enemy"]
 
 [sub_resource type="RectangleShape2D" id="PlayerShape"]
 size = Vector2(30, 42)
@@ -11,6 +16,15 @@ size = Vector2(3000, 48)
 
 [sub_resource type="RectangleShape2D" id="PlatformShape"]
 size = Vector2(190, 24)
+
+[sub_resource type="RectangleShape2D" id="HurtboxShape"]
+size = Vector2(28, 38)
+
+[sub_resource type="RectangleShape2D" id="AttackShape"]
+size = Vector2(70, 42)
+
+[sub_resource type="CircleShape2D" id="WispShape"]
+radius = 19.0
 
 [node name="Main" type="Node2D"]
 
@@ -31,7 +45,7 @@ color = Color(0.18, 0.25, 0.29, 1)
 polygon = PackedVector2Array(-1500, -24, 1500, -24, 1500, -15, -1500, -15)
 color = Color(0.39, 0.69, 0.43, 1)
 
-[node name="Platform1" type="StaticBody2D" parent="."]
+[node name="Platform1" type="StaticBody2D" parent="." groups=["platforms"]]
 position = Vector2(470, 468)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Platform1"]
@@ -41,7 +55,7 @@ shape = SubResource("PlatformShape")
 polygon = PackedVector2Array(-95, -12, 95, -12, 95, 12, -95, 12)
 color = Color(0.46, 0.72, 0.48, 1)
 
-[node name="Platform2" type="StaticBody2D" parent="."]
+[node name="Platform2" type="StaticBody2D" parent="." groups=["platforms"]]
 position = Vector2(800, 405)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Platform2"]
@@ -51,7 +65,7 @@ shape = SubResource("PlatformShape")
 polygon = PackedVector2Array(-95, -12, 95, -12, 95, 12, -95, 12)
 color = Color(0.46, 0.72, 0.48, 1)
 
-[node name="Platform3" type="StaticBody2D" parent="."]
+[node name="Platform3" type="StaticBody2D" parent="." groups=["platforms"]]
 position = Vector2(1160, 490)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Platform3"]
@@ -61,7 +75,7 @@ shape = SubResource("PlatformShape")
 polygon = PackedVector2Array(-95, -12, 95, -12, 95, 12, -95, 12)
 color = Color(0.46, 0.72, 0.48, 1)
 
-[node name="Platform4" type="StaticBody2D" parent="."]
+[node name="Platform4" type="StaticBody2D" parent="." groups=["platforms"]]
 position = Vector2(1510, 420)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Platform4"]
@@ -71,7 +85,7 @@ shape = SubResource("PlatformShape")
 polygon = PackedVector2Array(-95, -12, 95, -12, 95, 12, -95, 12)
 color = Color(0.46, 0.72, 0.48, 1)
 
-[node name="Platform5" type="StaticBody2D" parent="."]
+[node name="Platform5" type="StaticBody2D" parent="." groups=["platforms"]]
 position = Vector2(1880, 352)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Platform5"]
@@ -81,7 +95,7 @@ shape = SubResource("PlatformShape")
 polygon = PackedVector2Array(-95, -12, 95, -12, 95, 12, -95, 12)
 color = Color(0.46, 0.72, 0.48, 1)
 
-[node name="Platform6" type="StaticBody2D" parent="."]
+[node name="Platform6" type="StaticBody2D" parent="." groups=["platforms"]]
 position = Vector2(2260, 462)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Platform6"]
@@ -112,6 +126,37 @@ position = Vector2(6, -11)
 polygon = PackedVector2Array(-2, -3, 2, -3, 2, 3, -2, 3)
 color = Color(0.08, 0.14, 0.2, 1)
 
+[node name="Combatant" type="Node" parent="Player"]
+script = ExtResource("3_combatant")
+initiative_speed = 50.0
+damage = 20.0
+windup_seconds = 0.15
+execution_seconds = 0.20
+recovery_seconds = 0.45
+
+[node name="Hurtbox" type="Area2D" parent="Player"]
+collision_layer = 2
+collision_mask = 0
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player/Hurtbox"]
+shape = SubResource("HurtboxShape")
+
+[node name="Hitbox" type="Area2D" parent="Player"]
+collision_layer = 0
+collision_mask = 2
+monitoring = false
+monitorable = false
+script = ExtResource("4_ability")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player/Hitbox"]
+shape = SubResource("AttackShape")
+
+[node name="DefenseAura" type="Polygon2D" parent="Player"]
+visible = false
+polygon = PackedVector2Array(0, -34, 20, -27, 31, -8, 29, 15, 12, 33, -12, 33, -29, 15, -31, -8, -20, -27)
+color = Color(0.35, 0.75, 1, 0.38)
+
 [node name="Camera2D" type="Camera2D" parent="Player"]
 position_smoothing_enabled = true
 position_smoothing_speed = 5.0
@@ -120,15 +165,331 @@ limit_top = 0
 limit_right = 3000
 limit_bottom = 648
 
-[node name="HUD" type="CanvasLayer" parent="."]
+[node name="Goblin" type="CharacterBody2D" parent="."]
+position = Vector2(820, 510)
+script = ExtResource("5_enemy")
+target_path = NodePath("../Player")
 
-[node name="Instructions" type="Label" parent="HUD"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Goblin"]
+shape = SubResource("PlayerShape")
+
+[node name="Body" type="Polygon2D" parent="Goblin"]
+polygon = PackedVector2Array(-15, -21, 15, -21, 15, 14, 5, 21, -15, 21)
+color = Color(0.58, 0.33, 0.33, 1)
+
+[node name="Eye" type="Polygon2D" parent="Goblin"]
+position = Vector2(-6, -11)
+polygon = PackedVector2Array(-2, -3, 2, -3, 2, 3, -2, 3)
+color = Color(0.97, 0.79, 0.46, 1)
+
+[node name="Combatant" type="Node" parent="Goblin"]
+script = ExtResource("3_combatant")
+max_hp = 70.0
+initiative_speed = 42.0
+damage = 12.0
+windup_seconds = 0.48
+execution_seconds = 0.18
+recovery_seconds = 0.65
+
+[node name="Hurtbox" type="Area2D" parent="Goblin"]
+collision_layer = 2
+collision_mask = 0
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Goblin/Hurtbox"]
+shape = SubResource("HurtboxShape")
+
+[node name="Hitbox" type="Area2D" parent="Goblin"]
+collision_layer = 0
+collision_mask = 2
+monitoring = false
+monitorable = false
+script = ExtResource("4_ability")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Goblin/Hitbox"]
+shape = SubResource("AttackShape")
+
+[node name="ThornWolf" type="CharacterBody2D" parent="."]
+position = Vector2(1570, 510)
+script = ExtResource("5_enemy")
+target_path = NodePath("../Player")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ThornWolf"]
+shape = SubResource("PlayerShape")
+
+[node name="Body" type="Polygon2D" parent="ThornWolf"]
+polygon = PackedVector2Array(-18, -17, -8, -23, 12, -18, 20, -4, 13, 17, -12, 18, -20, 3)
+color = Color(0.37, 0.56, 0.37, 1)
+
+[node name="Eye" type="Polygon2D" parent="ThornWolf"]
+position = Vector2(-7, -9)
+polygon = PackedVector2Array(-2, -2, 2, -2, 2, 2, -2, 2)
+color = Color(1, 0.82, 0.45, 1)
+
+[node name="Combatant" type="Node" parent="ThornWolf"]
+script = ExtResource("3_combatant")
+max_hp = 82.0
+initiative_speed = 36.0
+damage = 15.0
+windup_seconds = 0.38
+execution_seconds = 0.20
+recovery_seconds = 0.62
+
+[node name="Hurtbox" type="Area2D" parent="ThornWolf"]
+collision_layer = 2
+collision_mask = 0
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ThornWolf/Hurtbox"]
+shape = SubResource("HurtboxShape")
+
+[node name="Hitbox" type="Area2D" parent="ThornWolf"]
+collision_layer = 0
+collision_mask = 2
+monitoring = false
+monitorable = false
+script = ExtResource("4_ability")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ThornWolf/Hitbox"]
+shape = SubResource("AttackShape")
+
+[node name="WillowWisp" type="CharacterBody2D" parent="."]
+position = Vector2(2380, 360)
+script = ExtResource("7_flying_enemy")
+target_path = NodePath("../Player")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WillowWisp"]
+shape = SubResource("WispShape")
+
+[node name="Body" type="Polygon2D" parent="WillowWisp"]
+polygon = PackedVector2Array(0, -21, 16, -8, 14, 11, 0, 20, -14, 11, -16, -8)
+color = Color(0.64, 0.79, 0.91, 0.94)
+
+[node name="LeftWing" type="Polygon2D" parent="WillowWisp"]
+position = Vector2(-17, -3)
+polygon = PackedVector2Array(0, -4, -18, -16, -13, 2, -3, 10)
+color = Color(0.39, 0.63, 0.79, 0.75)
+
+[node name="RightWing" type="Polygon2D" parent="WillowWisp"]
+position = Vector2(17, -3)
+polygon = PackedVector2Array(0, -4, 18, -16, 13, 2, 3, 10)
+color = Color(0.39, 0.63, 0.79, 0.75)
+
+[node name="Eye" type="Polygon2D" parent="WillowWisp"]
+position = Vector2(-5, -5)
+polygon = PackedVector2Array(-2, -2, 2, -2, 2, 2, -2, 2)
+color = Color(0.11, 0.19, 0.27, 1)
+
+[node name="Combatant" type="Node" parent="WillowWisp"]
+script = ExtResource("3_combatant")
+max_hp = 58.0
+initiative_speed = 39.0
+damage = 8.0
+projectile_damage = 11.0
+projectile_windup_seconds = 0.58
+projectile_recovery_seconds = 0.52
+
+[node name="Hurtbox" type="Area2D" parent="WillowWisp"]
+collision_layer = 2
+collision_mask = 0
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WillowWisp/Hurtbox"]
+shape = SubResource("HurtboxShape")
+
+[node name="Hitbox" type="Area2D" parent="WillowWisp"]
+collision_layer = 0
+collision_mask = 2
+monitoring = false
+monitorable = false
+script = ExtResource("4_ability")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WillowWisp/Hitbox"]
+shape = SubResource("AttackShape")
+
+[node name="CombatManager" type="Node" parent="."]
+script = ExtResource("6_manager")
+
+[node name="HUD" type="CanvasLayer" parent="."]
+visible = false
+
+[node name="EncounterTitle" type="Label" parent="HUD"]
 offset_left = 24.0
 offset_top = 22.0
-offset_right = 520.0
-offset_bottom = 60.0
+offset_right = 620.0
+offset_bottom = 54.0
 theme_override_colors/font_color = Color(0.93, 0.96, 0.89, 1)
 theme_override_colors/font_outline_color = Color(0.08, 0.13, 0.19, 1)
 theme_override_constants/outline_size = 5
-theme_override_font_sizes/font_size = 20
-text = "←  →  MOVER          ESPAÇO / ENTER  PULAR"
+theme_override_font_sizes/font_size = 22
+text = "Encounter — Twilight Forest"
+
+[node name="PlayerLabel" type="Label" parent="HUD"]
+offset_left = 24.0
+offset_top = 62.0
+offset_right = 240.0
+offset_bottom = 85.0
+theme_override_colors/font_color = Color(0.88, 0.95, 1, 1)
+theme_override_colors/font_outline_color = Color(0.08, 0.13, 0.19, 1)
+theme_override_constants/outline_size = 4
+text = "HERO — HP"
+
+[node name="PlayerHP" type="ProgressBar" parent="HUD"]
+offset_left = 24.0
+offset_top = 86.0
+offset_right = 244.0
+offset_bottom = 102.0
+show_percentage = false
+max_value = 100.0
+value = 100.0
+
+[node name="PlayerInitiativeLabel" type="Label" parent="HUD"]
+offset_left = 24.0
+offset_top = 106.0
+offset_right = 244.0
+offset_bottom = 128.0
+theme_override_colors/font_color = Color(0.88, 0.95, 1, 1)
+theme_override_colors/font_outline_color = Color(0.08, 0.13, 0.19, 1)
+theme_override_constants/outline_size = 4
+text = "INITIATIVE"
+
+[node name="PlayerInitiative" type="ProgressBar" parent="HUD"]
+offset_left = 24.0
+offset_top = 130.0
+offset_right = 244.0
+offset_bottom = 144.0
+show_percentage = false
+max_value = 100.0
+
+[node name="GoblinLabel" type="Label" parent="HUD"]
+offset_left = 272.0
+offset_top = 62.0
+offset_right = 488.0
+offset_bottom = 85.0
+theme_override_colors/font_color = Color(1, 0.86, 0.78, 1)
+theme_override_colors/font_outline_color = Color(0.08, 0.13, 0.19, 1)
+theme_override_constants/outline_size = 4
+text = "GOBLIN — HP"
+
+[node name="GoblinHP" type="ProgressBar" parent="HUD"]
+offset_left = 272.0
+offset_top = 86.0
+offset_right = 492.0
+offset_bottom = 102.0
+show_percentage = false
+max_value = 70.0
+value = 70.0
+
+[node name="GoblinInitiativeLabel" type="Label" parent="HUD"]
+offset_left = 272.0
+offset_top = 106.0
+offset_right = 492.0
+offset_bottom = 128.0
+theme_override_colors/font_color = Color(1, 0.86, 0.78, 1)
+theme_override_colors/font_outline_color = Color(0.08, 0.13, 0.19, 1)
+theme_override_constants/outline_size = 4
+text = "INITIATIVE"
+
+[node name="GoblinInitiative" type="ProgressBar" parent="HUD"]
+offset_left = 272.0
+offset_top = 130.0
+offset_right = 492.0
+offset_bottom = 144.0
+show_percentage = false
+max_value = 100.0
+
+[node name="ThornWolfLabel" type="Label" parent="HUD"]
+offset_left = 530.0
+offset_top = 62.0
+offset_right = 750.0
+offset_bottom = 85.0
+theme_override_colors/font_color = Color(0.88, 0.95, 1, 1)
+theme_override_colors/font_outline_color = Color(0.08, 0.13, 0.19, 1)
+theme_override_constants/outline_size = 4
+text = "THORN WOLF — HP"
+
+[node name="ThornWolfHP" type="ProgressBar" parent="HUD"]
+offset_left = 530.0
+offset_top = 86.0
+offset_right = 750.0
+offset_bottom = 102.0
+show_percentage = false
+max_value = 82.0
+value = 82.0
+
+[node name="ThornWolfInitiativeLabel" type="Label" parent="HUD"]
+offset_left = 530.0
+offset_top = 106.0
+offset_right = 750.0
+offset_bottom = 128.0
+theme_override_colors/font_color = Color(0.88, 0.95, 1, 1)
+theme_override_colors/font_outline_color = Color(0.08, 0.13, 0.19, 1)
+theme_override_constants/outline_size = 4
+text = "INITIATIVE"
+
+[node name="ThornWolfInitiative" type="ProgressBar" parent="HUD"]
+offset_left = 530.0
+offset_top = 130.0
+offset_right = 750.0
+offset_bottom = 144.0
+show_percentage = false
+max_value = 100.0
+
+[node name="WillowWispLabel" type="Label" parent="HUD"]
+offset_left = 788.0
+offset_top = 62.0
+offset_right = 1008.0
+offset_bottom = 85.0
+theme_override_colors/font_color = Color(0.88, 0.95, 1, 1)
+theme_override_colors/font_outline_color = Color(0.08, 0.13, 0.19, 1)
+theme_override_constants/outline_size = 4
+text = "WILLOW WISP — HP"
+
+[node name="WillowWispHP" type="ProgressBar" parent="HUD"]
+offset_left = 788.0
+offset_top = 86.0
+offset_right = 1008.0
+offset_bottom = 102.0
+show_percentage = false
+max_value = 58.0
+value = 58.0
+
+[node name="WillowWispInitiativeLabel" type="Label" parent="HUD"]
+offset_left = 788.0
+offset_top = 106.0
+offset_right = 1008.0
+offset_bottom = 128.0
+theme_override_colors/font_color = Color(0.88, 0.95, 1, 1)
+theme_override_colors/font_outline_color = Color(0.08, 0.13, 0.19, 1)
+theme_override_constants/outline_size = 4
+text = "INITIATIVE"
+
+[node name="WillowWispInitiative" type="ProgressBar" parent="HUD"]
+offset_left = 788.0
+offset_top = 130.0
+offset_right = 1008.0
+offset_bottom = 144.0
+show_percentage = false
+max_value = 100.0
+
+[node name="CombatState" type="Label" parent="HUD"]
+offset_left = 24.0
+offset_top = 154.0
+offset_right = 620.0
+offset_bottom = 180.0
+theme_override_colors/font_color = Color(0.91, 0.94, 0.92, 1)
+theme_override_colors/font_outline_color = Color(0.08, 0.13, 0.19, 1)
+theme_override_constants/outline_size = 4
+text = ""
+
+[node name="Instructions" type="Label" parent="HUD"]
+offset_left = 24.0
+offset_top = 598.0
+offset_right = 1120.0
+offset_bottom = 634.0
+theme_override_colors/font_color = Color(0.93, 0.96, 0.89, 1)
+theme_override_colors/font_outline_color = Color(0.08, 0.13, 0.19, 1)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 18
+text = "← → MOVE   ↓ DROP   SPACE JUMP   F STRIKE   G BOLT   Q GUARD   (abilities require full initiative)"
+

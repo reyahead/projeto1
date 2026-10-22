@@ -1,14 +1,18 @@
-# RPG Plataforma 2D
+# 2D Platform RPG
 
-Protótipo inicial de um RPG de plataforma 2D feito no Godot 4, inspirado no GDD do projeto.
+An early Godot 4 prototype for a real-time RPG platformer, based on the project's game design document.
 
-## Como abrir
+## Open the project
 
-Abra o `project.godot` pelo Godot Project Manager. A cena principal está em `scenes/main.tscn`.
+Open `project.godot` from the Godot Project Manager. The main scene is `scenes/main.tscn`.
 
-## Controles do protótipo
+## Controls
 
-- Setas esquerda e direita: mover
-- Espaço ou Enter: pular
+- Left and right arrows: move
+- Down arrow: drop through platforms
+- Space or Enter: jump
+- F: basic strike (requires full initiative)
+- G: magic bolt (requires full initiative)
+- Q: guard (requires full initiative)
 
-O personagem, o chão e a plataforma são formas provisórias. A próxima etapa é validar o movimento e depois começar o sistema de combate em tempo contínuo.
+Combat begins when the player approaches an enemy. The combat interface is hidden during exploration and after the encounter ends.
