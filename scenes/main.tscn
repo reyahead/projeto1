@@ -1,0 +1,134 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/player_controller.gd" id="1_player"]
+[ext_resource type="Script" path="res://scripts/world_art.gd" id="2_art"]
+
+[sub_resource type="RectangleShape2D" id="PlayerShape"]
+size = Vector2(30, 42)
+
+[sub_resource type="RectangleShape2D" id="GroundShape"]
+size = Vector2(3000, 48)
+
+[sub_resource type="RectangleShape2D" id="PlatformShape"]
+size = Vector2(190, 24)
+
+[node name="Main" type="Node2D"]
+
+[node name="WorldArt" type="Node2D" parent="."]
+script = ExtResource("2_art")
+
+[node name="Ground" type="StaticBody2D" parent="."]
+position = Vector2(1500, 574)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ground"]
+shape = SubResource("GroundShape")
+
+[node name="Soil" type="Polygon2D" parent="Ground"]
+polygon = PackedVector2Array(-1500, -24, 1500, -24, 1500, 24, -1500, 24)
+color = Color(0.18, 0.25, 0.29, 1)
+
+[node name="Grass" type="Polygon2D" parent="Ground"]
+polygon = PackedVector2Array(-1500, -24, 1500, -24, 1500, -15, -1500, -15)
+color = Color(0.39, 0.69, 0.43, 1)
+
+[node name="Platform1" type="StaticBody2D" parent="."]
+position = Vector2(470, 468)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platform1"]
+shape = SubResource("PlatformShape")
+
+[node name="Visual" type="Polygon2D" parent="Platform1"]
+polygon = PackedVector2Array(-95, -12, 95, -12, 95, 12, -95, 12)
+color = Color(0.46, 0.72, 0.48, 1)
+
+[node name="Platform2" type="StaticBody2D" parent="."]
+position = Vector2(800, 405)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platform2"]
+shape = SubResource("PlatformShape")
+
+[node name="Visual" type="Polygon2D" parent="Platform2"]
+polygon = PackedVector2Array(-95, -12, 95, -12, 95, 12, -95, 12)
+color = Color(0.46, 0.72, 0.48, 1)
+
+[node name="Platform3" type="StaticBody2D" parent="."]
+position = Vector2(1160, 490)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platform3"]
+shape = SubResource("PlatformShape")
+
+[node name="Visual" type="Polygon2D" parent="Platform3"]
+polygon = PackedVector2Array(-95, -12, 95, -12, 95, 12, -95, 12)
+color = Color(0.46, 0.72, 0.48, 1)
+
+[node name="Platform4" type="StaticBody2D" parent="."]
+position = Vector2(1510, 420)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platform4"]
+shape = SubResource("PlatformShape")
+
+[node name="Visual" type="Polygon2D" parent="Platform4"]
+polygon = PackedVector2Array(-95, -12, 95, -12, 95, 12, -95, 12)
+color = Color(0.46, 0.72, 0.48, 1)
+
+[node name="Platform5" type="StaticBody2D" parent="."]
+position = Vector2(1880, 352)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platform5"]
+shape = SubResource("PlatformShape")
+
+[node name="Visual" type="Polygon2D" parent="Platform5"]
+polygon = PackedVector2Array(-95, -12, 95, -12, 95, 12, -95, 12)
+color = Color(0.46, 0.72, 0.48, 1)
+
+[node name="Platform6" type="StaticBody2D" parent="."]
+position = Vector2(2260, 462)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platform6"]
+shape = SubResource("PlatformShape")
+
+[node name="Visual" type="Polygon2D" parent="Platform6"]
+polygon = PackedVector2Array(-95, -12, 95, -12, 95, 12, -95, 12)
+color = Color(0.46, 0.72, 0.48, 1)
+
+[node name="Player" type="CharacterBody2D" parent="."]
+position = Vector2(160, 420)
+script = ExtResource("1_player")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
+shape = SubResource("PlayerShape")
+
+[node name="Body" type="Polygon2D" parent="Player"]
+polygon = PackedVector2Array(-15, -21, 15, -21, 15, 13, 7, 21, -15, 21)
+color = Color(0.28, 0.72, 0.91, 1)
+
+[node name="Scarf" type="Polygon2D" parent="Player"]
+position = Vector2(0, -5)
+polygon = PackedVector2Array(-15, -2, 15, -2, 14, 4, -12, 4)
+color = Color(0.96, 0.52, 0.31, 1)
+
+[node name="Eye" type="Polygon2D" parent="Player"]
+position = Vector2(6, -11)
+polygon = PackedVector2Array(-2, -3, 2, -3, 2, 3, -2, 3)
+color = Color(0.08, 0.14, 0.2, 1)
+
+[node name="Camera2D" type="Camera2D" parent="Player"]
+position_smoothing_enabled = true
+position_smoothing_speed = 5.0
+limit_left = 0
+limit_top = 0
+limit_right = 3000
+limit_bottom = 648
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="Instructions" type="Label" parent="HUD"]
+offset_left = 24.0
+offset_top = 22.0
+offset_right = 520.0
+offset_bottom = 60.0
+theme_override_colors/font_color = Color(0.93, 0.96, 0.89, 1)
+theme_override_colors/font_outline_color = Color(0.08, 0.13, 0.19, 1)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 20
+text = "←  →  MOVER          ESPAÇO / ENTER  PULAR"
